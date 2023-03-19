@@ -1,0 +1,22 @@
+@startuml
+
+    folder "Monetary Emission Factors - Exiobase" as exiobase
+    cloud "French Financial Statements" as fr
+    cloud "Switzerland Financial Statements" as ch
+    file "Mapping chart of account and monetary emission factors" as mapping
+    rectangle "Cities Financial Statements" as finance
+    
+    node "MyCityCO2" as mycityco2{
+        database "MyCityCO2 database" as database
+        component "MyCityCO2 engine" as engine
+    }
+    fr --> finance
+    ch --> finance
+    exiobase --> database
+    finance --> database
+    mapping --> database
+    database --> engine
+
+
+
+@enduml
