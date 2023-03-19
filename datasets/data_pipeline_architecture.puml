@@ -1,22 +1,38 @@
-@startuml
+@startuml Data Pipeline Architecture
 
-    folder "Monetary Emission Factors - Exiobase" as exiobase
-    cloud "French Financial Statements" as fr
-    cloud "Switzerland Financial Statements" as ch
-    file "Mapping chart of account and monetary emission factors" as mapping
-    rectangle "Cities Financial Statements" as finance
     
-    node "MyCityCO2" as mycityco2{
-        database "MyCityCO2 database" as database
-        component "MyCityCO2 engine" as engine
+
+    node "Collect" as pip_collect{
+        package "Exiobase source" {
+            folder "Monetary Emission Factors" as coll_exiobase   
+        }
+        package "Country" {
+            database "Financial Statements" as coll_finance
+            file "Population" as coll_population
+
+        }
     }
-    fr --> finance
-    ch --> finance
-    exiobase --> database
-    finance --> database
-    mapping --> database
-    database --> engine
 
+    node "Prepare" as pip_prepare{
+        component "Cities Financial Statements" as prep_finance
+        file "Exiobase"{
+            file "Monetary Emission Factors" as prep_exiobase
+        }
+        file "Mapping chart of account and monetary emission factors" as mapping
+    }
+    
+    node "Store" as pip_store{
+        database "Cities Financial Statements" as store_finance
+        database "Exiobase" as store_exiobase
+    }
 
+    node "Compute" as pip_compute{
+        component "MyCityCO2 engine" as compute_engine
+    }
 
+    coll_finance --> prep_finance
+    prep_finance --> store_finance
+    store_finance --> compute_engine
+
+    coll_exiobase --> prep_exiobase
 @enduml
